@@ -69,6 +69,36 @@ function App() {
     content = <p> loading </p>
   }
 
+  const fetchStarWarsMoviesHandler = async () => {
+
+    setLoading(true);
+    setError(null);
+    setMovies([]);
+
+    try {
+      const req = await fetch('https://swapi.dev/api/films/')
+      if (!req.ok) {
+        throw new Error('Something went wrong!');
+      }
+
+      const res= await req.json()
+      const data = res.results.map((result) => {
+        return {
+        id: result.episode_id, 
+        title: result.title, 
+        releaseDate: result.release_date, 
+        openingText: result.opening_crawl  
+      }})
+
+      setMovies(data)
+  
+      console.log(data)
+    } catch (error) {
+      setError(error.message)
+ 
+    }
+    setLoading(false)
+  }
 
   return (
     <React.Fragment>
@@ -79,6 +109,9 @@ function App() {
         <button onClick={fetchMovieshandler}>Fetch Movies</button>
       </section>
       <section>
+        <button onClick={fetchStarWarsMoviesHandler}>Fetch Starwars movies</button>
+      </section>
+      <section>
     {content}
       </section>
     </React.Fragment>
@@ -86,3 +119,4 @@ function App() {
 }
 
 export default App;
+
