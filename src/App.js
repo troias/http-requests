@@ -1,22 +1,7 @@
-import React, {useEffect, useState} from 'react';
-
+import React, {useEffect, useState, useCallback} from 'react';
 import MoviesList from './components/MoviesList';
 import './App.css';
 
-  const dummyMovies = [
-    {
-      id: 1,
-      title: 'Some Dummy Movie',
-      openingText: 'This is the opening text of the movie',
-      releaseDate: '2021-05-18',
-    },
-    {
-      id: 2,
-      title: 'Some Dummy Movie 2',
-      openingText: 'This is the second opening text of the movie',
-      releaseDate: '2021-05-19',
-    },
-  ];
 
 function App() {
 
@@ -24,11 +9,9 @@ function App() {
   const [loading, setLoading]= useState(false)
   const [ error, setError] = useState("")
 
-  // useEffect(() =>{
-  //   fetchMovieshandler()
-  // }, [movies])
+ 
 
-  const fetchMovieshandler = async ()  => {
+  const fetchMovieshandler = useCallback(async () => {
     setLoading(true)
     setError(null)
     
@@ -52,6 +35,25 @@ function App() {
     
     }
     setLoading(false)
+  }, [])
+
+  useEffect(() =>{
+    fetchMovieshandler()
+  }, [fetchMovieshandler])
+
+
+  let content = <p> found no movies </p>
+
+  if (movies.length > 0) {
+    content = <MoviesList movies={movies} />
+  }
+  
+  if (error) {
+    content = <p> {error} </p>
+  }
+  
+  if (loading) {
+    content = <p> loading </p>
   }
 
 
@@ -61,11 +63,7 @@ function App() {
         <button onClick={fetchMovieshandler}>Fetch Movies</button>
       </section>
       <section>
-         {!loading && movies.length === 0 && !error && <p> Click to fetch movies </p>}
-        {!loading && movies.length > 0 && <MoviesList movies={movies} /> }
-        {loading && <p>Loading</p>}
-        {!loading && error && <p> {error} </p>}
-        {console.log(error)}
+    {content}
       </section>
     </React.Fragment>
   );
